@@ -33,6 +33,15 @@ MAX_DIM = 2000
 # WorldView 2A products pad the rotated swath with zeros rather than nodata.
 TREAT_ZERO_AS_NODATA = True
 
+# Drop specific rasters from the union and mean footprint calculations.
+# THESE ARE IMGS I HAVEN'T BEEN ABLE TO UPLOAD, excluding for now
+EXCLUDE_IMGS = True
+EXCLUDED_NAMES = {
+    "24NOV27190359-M2AS-510345993010_01_P004.TIF",
+    "24DEC04191641-M2AS-510345993020_01_P004.TIF",
+}
+_EXCLUDED_UPPER = {n.upper() for n in EXCLUDED_NAMES}
+
 
 def _footprint_wgs84(path: Path):
     """Valid-data footprint of one raster as a shapely geometry in EPSG:4326."""
@@ -89,6 +98,7 @@ def date_folder_stats(folder: Path) -> dict:
         if p.is_file()
         and p.suffix.lower() in EXTENSIONS
         and (NAME_FILTER is None or NAME_FILTER.upper() in p.name.upper())
+        and not (EXCLUDE_IMGS and p.name.upper() in _EXCLUDED_UPPER)
     )
 
     footprints = []
@@ -143,6 +153,13 @@ def main() -> None:
     pd.set_option("display.width", 200)
     print()
     print(df.to_string(index=False, float_format=lambda v: f"{v:,.2f}"))
+
+    total_images = int(df["n_images"].sum())
+    if total_images:
+        mean_all = df["sum_footprint_km2"].sum() / total_images
+        print(f"\nImages across all dates: {total_images}")
+        print(f"Mean footprint area, all images: {mean_all:,.2f} km2")
+        print(f"Total non-overlapping area, all dates: {df['union_area_km2'].sum():,.2f} km2")
 
     df.to_csv(Path(__file__).with_name("footprint_area_by_date.csv"), index=False)
 

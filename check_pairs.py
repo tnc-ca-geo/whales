@@ -100,7 +100,7 @@ if __name__ == "__main__":
     folder = Path(
         sys.argv[1]
         if len(sys.argv) > 1
-        else "/Users/annietaylor/Documents/Whales/Whales_Uplift_15/2a_11Dec2025"
+        else "/Users/annietaylor/Documents/Whales/Whales_Uplift_15/2a_4Dec24"
     )
 
     if not folder.is_dir():
