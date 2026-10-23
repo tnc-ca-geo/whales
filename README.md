@@ -1,4 +1,4 @@
-# Whales
+# WhalesAI Image Analysis
 
 Scripts for inspecting WorldView-3 satellite imagery footprints and matching valid MS + Panchromatic image pairs for uploading to whalesAI.
 
